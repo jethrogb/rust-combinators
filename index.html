@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<!--
+Selection tool for Rust combinators
+
+(C) Copyright 2016 Jethro G. Beekman
+
+Licensed under the Apache License, Version 2.0 <COPYING-APACHE or 
+http://www.apache.org/licenses/LICENSE-2.0> or the MIT license <COPYING-MIT or 
+http://opensource.org/licenses/MIT>, at your option. All files in the project 
+carrying such notice may not be copied, modified, or distributed except 
+according to those terms.
+-->
+<html>
+<head>
+<title>Rust combinators</title>
+<meta charset='utf-8' />
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<style type="text/css">
+select { x-width: 150px }
+option.clear { color: #888 }
+option { display: block }
+option:hover { background: #ccf }
+</style>
+</head>
+<body>
+<p>
+I have <select id="have" size="10"></select>
+I want <select id="want" size="10"></select>
+by <select id="by" size="10"></select> <select id="by_mod" size="10"></select>
+or <select id="or" size="10"></select> <select id="or_mod" size="10"></select>
+</p>
+<button id="clear_all">Reset all</button>
+<p id="disp"></p>
+<script type="text/javascript">
+var methods=[
+{"method":["Option","expect"],            "have":"Option<T>",   "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"panicking",            "or_mod":"with a specific error message"},
+{"method":["Option","unwrap"],            "have":"Option<T>",   "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"panicking",            "or_mod":"with a generic error message"},
+{"method":["Option","unwrap_or"],         "have":"Option<T>",   "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a specific value"},
+{"method":["Option","unwrap_or_default"], "have":"Option<T>",   "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a default value"},
+{"method":["Option","unwrap_or_else"],    "have":"Option<T>",   "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"returning T"},
+{"method":["Option","and"],               "have":"Option<T>",   "want":"Option<U>",   "by":"replacing the result",   "by_mod":"with a specific value",        "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Option","map"],               "have":"Option<T>",   "want":"Option<U>",   "by":"running a closure",      "by_mod":"turning T into U",             "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Option","and_then"],          "have":"Option<T>",   "want":"Option<U>",   "by":"running a closure",      "by_mod":"turning T into Option<U>",     "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Option","map_or"],            "have":"Option<T>",   "want":"U",           "by":"running a closure",      "by_mod":"turning T into U",             "or":"replacing $ERRNAME",   "or_mod":"with a specific value"},
+{"method":["Option","map_or_else"],       "have":"Option<T>",   "want":"U",           "by":"running a closure",      "by_mod":"turning T into U",             "or":"running a closure",    "or_mod":"returning U"},
+{"method":["Option","ok_or"],             "have":"Option<T>",   "want":"Result<T,E>", "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a specific value"},
+{"method":["Option","ok_or_else"],        "have":"Option<T>",   "want":"Result<T,E>", "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"returning E"},
+{"method":["Option","or"],                "have":"Option<T>",   "want":"Option<T>",   "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a default value"},
+{"method":["Option","or_else"],           "have":"Option<T>",   "want":"Option<T>",   "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"returning Option<T>"},
+{"method":["Result","ok"],                "have":"Result<T,E>", "want":"Option<T>",   "by":"propagating the result", "by_mod":null,                           "or":"discarding $ERRNAME",  "or_mod":null},
+{"method":["Result","err"],               "have":"Result<T,E>", "want":"Option<E>",   "by":"discarding the result",  "by_mod":null,                           "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Result","and"],               "have":"Result<T,E>", "want":"Result<U,E>", "by":"replacing the result",   "by_mod":"with a specific value",        "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Result","map"],               "have":"Result<T,E>", "want":"Result<U,E>", "by":"running a closure",      "by_mod":"turning T into U",             "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Result","and_then"],          "have":"Result<T,E>", "want":"Result<U,E>", "by":"running a closure",      "by_mod":"turning T into Result<U,E>",   "or":"propagating $ERRNAME", "or_mod":null},
+{"method":["Result","map_err"],           "have":"Result<T,E>", "want":"Result<T,F>", "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"turning E into F"},
+{"method":["Result","or"],                "have":"Result<T,E>", "want":"Result<T,F>", "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a specific value"},
+{"method":["Result","or_else"],           "have":"Result<T,E>", "want":"Result<T,F>", "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"turning E into Result<T,F>"},
+{"method":["Result","unwrap_or"],         "have":"Result<T,E>", "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"replacing $ERRNAME",   "or_mod":"with a specific value"},
+{"method":["Result","unwrap_or_else"],    "have":"Result<T,E>", "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"running a closure",    "or_mod":"turning E into T"},
+{"method":["Result","unwrap"],            "have":"Result<T,E>", "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"panicking",            "or_mod":"with a generic error message"},
+{"method":["Result","expect"],            "have":"Result<T,E>", "want":"T",           "by":"propagating the result", "by_mod":null,                           "or":"panicking",            "or_mod":"with a specific error message"},
+{"method":["Result","unwrap_err"],        "have":"Result<T,E>", "want":"E",           "by":"panicking",              "by_mod":"with a generic error message", "or":"propagating $ERRNAME", "or_mod":null},
+];
+
+var types={
+"Option":{"url":"https://doc.rust-lang.org/stable/std/option/enum.Option.html", "ERRNAME":"None"},
+"Result":{"url":"https://doc.rust-lang.org/stable/std/result/enum.Result.html", "ERRNAME":"the error"},
+};
+
+function getColumn(key,constraints) {
+	var selected=methods.filter(function(el){
+		for (c in constraints)
+			if (el[c]!=constraints[c])
+				return false;
+		return true;
+	});
+	return _(selected).map(function(row){
+		return row[key];
+	}).sort().uniq(true).value();
+}
+
+function makeOption(text,errname,selected) {
+	var opt=$('<option>').val(text).text(text.replace("$ERRNAME",errname,"g"));
+	if (text==selected)
+		opt.attr('selected',true);
+	return opt;
+}
+
+function mod_for(maybe_mod) {
+	if (_.endsWith(maybe_mod,"_mod")) {
+		return maybe_mod.replace(/_mod$/,"");
+	} else {
+		return null;
+	}
+}
+
+//"have":[],"want":[],"by":[],"by_mod":[],"or":[],"or_mod"
+function showColumns(selected) {
+	var errname=_(getColumn('method',selected)).map(function(method){
+		return types[method[0]].ERRNAME;
+	}).uniq(true).join('/');
+	["have","want","by","by_mod","or","or_mod"].forEach(function(k){
+		var opts=getColumn(k,_.omit(selected,k));
+		var select=$('#'+k);
+		select.empty();
+		if (_.eq(opts,[null]) || mod_for(k) && !selected.hasOwnProperty(mod_for(k))) {
+			select.hide();
+			select.val(null);
+		} else {
+			select.show();
+			var matched=false;
+			var opts=_.compact(opts).map(function(row){
+				matched=matched||(row==selected[k]);
+				return makeOption(row,errname,selected[k]);
+			});
+			if (opts.length!=1 || matched) {
+				var opt=$('<option class="clear" value="">(clear)</option>');
+				if (!matched)
+					opt.attr('selected',true);
+				opts.unshift(opt);
+			}
+			opts.forEach(function(opt){
+				select.append(opt);
+			});
+		}
+	});
+}
+
+var lastSelected;
+
+function updateOptions(save,load,override) {
+	var selected;
+	if (load) {
+		selected=lastSelected;
+	} else {
+		selected=_.reduce(["have","want","by","by_mod","or","or_mod"].map(function(k){
+			var v=$('#'+k).val();
+			if (v) {
+				var obj={};
+				obj[k]=v;
+				return obj;
+			}
+		}),_.merge,{});
+		if (!selected.hasOwnProperty('by')) selected=_.omit(selected,'by_mod');
+		if (!selected.hasOwnProperty('or')) selected=_.omit(selected,'or_mod');
+	}
+	if (save) lastSelected=selected;
+	_.assign(selected,override);
+
+	showColumns(selected);
+	var method=getColumn('method',selected);
+	if (method.length==1) {
+		var a=$('<a>');
+		a.prop('href',types[method[0][0]].url+'#method.'+method[0][1]);
+		a.text(method[0][0]+'::'+method[0][1]);
+		$('#disp').html(a.prop('outerHTML'));
+	} else {
+		$('#disp').text('');
+	}
+}
+
+function changeHandler() {
+	updateOptions(true,false,{});
+}
+
+$('select').change(changeHandler);
+$('#clear_all').click(function(){lastSelected={};updateOptions(true,true,{})});
+
+$(window).load(function(){showColumns({});updateOptions(true,false,{});});
+
+</script>
+</body>
+</html>
