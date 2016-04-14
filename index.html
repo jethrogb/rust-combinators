@@ -17,6 +17,7 @@ according to those terms.
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
 <style type="text/css">
+a { color: blue }
 select { x-width: 150px }
 option.clear { color: #888 }
 option { display: block }
@@ -32,6 +33,7 @@ or <select id="or" size="13"></select> <select id="or_mod" size="13"></select>
 </p>
 <button id="clear_all">Reset all</button>
 <p id="disp"></p>
+<p><a href="https://github.com/jethrogb/rust-combinators">source</a></p>
 <script type="text/javascript">
 var methods=[
 {"method":["Option","expect"],               "have":"Option<T>",             "want":"T",                       "by":"propagating the result", "by_mod":null,                           "or":"panicking",                      "or_mod":"with a specific error message"},
