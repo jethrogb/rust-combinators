@@ -11,29 +11,49 @@ carrying such notice may not be copied, modified, or distributed except
 according to those terms.
 -->
 <html>
+
 <head>
 <title>Rust combinators</title>
 <meta charset='utf-8' />
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.min.js"></script>
 <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
-<style type="text/css">
-a { color: blue }
-select { x-width: 150px }
-option.clear { color: #888 }
-option { display: block }
-option:hover { background: #ccf }
-</style>
+<link href="styles.css" rel="stylesheet" />
 </head>
+
 <body>
-<p>
-I have <select id="have" size="13"></select>
-I want <select id="want" size="13"></select>
-by <select id="by" size="13"></select> <select id="by_mod" size="13"></select>
-or <select id="or" size="13"></select> <select id="or_mod" size="13"></select>
-</p>
-<button id="clear_all">Reset all</button>
-<p id="disp"></p>
-<p><a href="https://github.com/jethrogb/rust-combinators">source</a></p>
+	<div class="action">
+		<label>I have</label>
+		<select id="have"></select>
+	</div>
+	<div class="action">
+		<label>I want</label>
+		<select id="want"></select>
+	</div>
+	<div class="action">
+		<label>By</label>
+		<select id="by"></select>
+	</div>
+	<div class="action">
+		<label>&hellip;</label>
+		<select id="by_mod"></select>
+	</div>
+	<div class="action or">
+		<label>Or</label>
+		<select id="or"></select>
+	</div>
+	<div class="action">
+		<label>&hellip;</label>
+		<select id="or_mod"></select>
+	</div>
+
+	<div class="clear">
+		<button id="clear_all">Reset all</button> &middot;
+		<a href="https://github.com/jethrogb/rust-combinators">source</a>
+	</div>
+	<div class="clear result">
+		<code id="disp"></code>
+	</div>
+
 <script type="text/javascript">
 var methods=[
 {"method":["Option","expect"],               "have":"Option<T>",             "want":"T",                       "by":"propagating the result",           "by_mod":null,                            "or":"panicking",                          "or_mod":"with a specific error message"},
@@ -93,9 +113,14 @@ function getColumn(key,constraints) {
 }
 
 function makeOption(text,errname,selected) {
-	var opt=$('<option>').val(text).text(text.replace("$ERRNAME",errname,"g"));
-	if (text==selected)
+	var value=text;
+	var title=text.replace("$ERRNAME", errname, "g");
+
+	var opt=$('<option>').val(value).text(title);
+	if (value==selected)
 		opt.attr('selected',true);
+
+	opt.attr("title", title);
 	return opt;
 }
 
@@ -109,15 +134,17 @@ function mod_for(maybe_mod) {
 
 //"have":[],"want":[],"by":[],"by_mod":[],"or":[],"or_mod"
 function showColumns(selected) {
+	var longestColumnSize=2;
+
 	["have","want","by","by_mod","or","or_mod"].forEach(function(k){
 		var opts=getColumn(k,_.omit(selected,k));
 		var select=$('#'+k);
 		select.empty();
 		if (_.eq(opts,[null]) || mod_for(k) && !selected.hasOwnProperty(mod_for(k))) {
-			select.hide();
+			select.parent().hide();
 			select.val(null);
 		} else {
-			select.show();
+			select.parent().show();
 			var matched=false;
 			var opts=_.compact(opts).map(function(row){
 				var this_opt={};
@@ -137,8 +164,14 @@ function showColumns(selected) {
 			opts.forEach(function(opt){
 				select.append(opt);
 			});
+
+			if (longestColumnSize < opts.length) {
+				longestColumnSize = opts.length;
+			}
 		}
 	});
+
+	$('select').attr('size', longestColumnSize);
 }
 
 var lastSelected;
@@ -168,7 +201,9 @@ function updateOptions(save,load,override) {
 		var a=$('<a>');
 		a.prop('href',types[method[0][0]].url+'#method.'+method[0][1]);
 		a.text(method[0][0]+'::'+method[0][1]);
+		a.attr('target', '_blank');
 		$('#disp').html(a.prop('outerHTML'));
+		$('#disp').html('⟶ '+a.prop('outerHTML'));
 	} else {
 		$('#disp').text('');
 	}

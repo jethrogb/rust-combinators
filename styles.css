@@ -1,0 +1,78 @@
+body {
+    font-size: 14pt;
+}
+
+a {
+    color: blue;
+}
+
+select {
+    x-width: 150px;
+    font-size: 12pt;
+}
+
+option.clear {
+    color: #888;
+}
+
+option {
+    display: block;
+    /*white-space: pre-wrap;*/
+    padding: 5px;
+}
+
+option:hover {
+    background: #ccf;
+}
+
+.action {
+    width: 250px;
+    float: left;
+    padding: 0 5px 5px 0;
+}
+
+.action label {
+    display: block;
+}
+
+.action select {
+    width: 100%;
+}
+
+.action.or {
+    width: 310px;
+}
+
+.clear {
+    clear: both;
+}
+
+button {
+    font-size: 14pt;
+}
+
+a[target="_blank"]:hover:after {
+    background-repeat: no-repeat;
+    background: url("data:image/svg+xml,%3Csvg xmlns:dc='http://purl.org/dc/elements/1.1/' xmlns:cc='http://creativecommons.org/ns%23' xmlns:rdf='http://www.w3.org/1999/02/22-rdf-syntax-ns%23' xmlns:svg='http://www.w3.org/2000/svg' xmlns='http://www.w3.org/2000/svg' xmlns:sodipodi='http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd' xmlns:inkscape='http://www.inkscape.org/namespaces/inkscape' viewBox='0 -256 1850 1850' id='svg3025' version='1.1' inkscape:version='0.48.3.1 r9886' width='100%25' height='100%25' sodipodi:docname='external_link_font_awesome.svg'%3E%3Cmetadata id='metadata3035'%3E%3Crdf:RDF%3E%3Ccc:Work rdf:about=''%3E%3Cdc:format%3Eimage/svg+xml%3C/dc:format%3E%3Cdc:type rdf:resource='http://purl.org/dc/dcmitype/StillImage' /%3E%3C/cc:Work%3E%3C/rdf:RDF%3E%3C/metadata%3E%3Cdefs id='defs3033' /%3E%3Csodipodi:namedview pagecolor='%23ffffff' bordercolor='%23666666' borderopacity='1' objecttolerance='10' gridtolerance='10' guidetolerance='10' inkscape:pageopacity='0' inkscape:pageshadow='2' inkscape:window-width='640' inkscape:window-height='480' id='namedview3031' showgrid='false' inkscape:zoom='0.13169643' inkscape:cx='896' inkscape:cy='896' inkscape:window-x='0' inkscape:window-y='25' inkscape:window-maximized='0' inkscape:current-layer='svg3025' /%3E%3Cg transform='matrix(1,0,0,-1,30.372881,1426.9492)' id='g3027'%3E%3Cpath d='M 1408,608 V 288 Q 1408,169 1323.5,84.5 1239,0 1120,0 H 288 Q 169,0 84.5,84.5 0,169 0,288 v 832 Q 0,1239 84.5,1323.5 169,1408 288,1408 h 704 q 14,0 23,-9 9,-9 9,-23 v -64 q 0,-14 -9,-23 -9,-9 -23,-9 H 288 q -66,0 -113,-47 -47,-47 -47,-113 V 288 q 0,-66 47,-113 47,-47 113,-47 h 832 q 66,0 113,47 47,47 47,113 v 320 q 0,14 9,23 9,9 23,9 h 64 q 14,0 23,-9 9,-9 9,-23 z m 384,864 V 960 q 0,-26 -19,-45 -19,-19 -45,-19 -26,0 -45,19 L 1507,1091 855,439 q -10,-10 -23,-10 -13,0 -23,10 L 695,553 q -10,10 -10,23 0,13 10,23 l 652,652 -176,176 q -19,19 -19,45 0,26 19,45 19,19 45,19 h 512 q 26,0 45,-19 19,-19 19,-45 z' id='path3029' inkscape:connector-curvature='0' style='fill:currentColor' /%3E%3C/g%3E%3C/svg%3E%0A");
+    content: ' ';
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-left: 5px;
+}
+
+.result {
+    margin: 20px 0;
+    font-size: 24pt;
+    color: #0000ee;
+}
+
+.result a {
+    color: black;
+    text-decoration: none;
+}
+
+.result a:hover {
+    color: #0000ee;
+    text-decoration: underline;
+}
