@@ -209,9 +209,11 @@ function updateOptions(save,load,override) {
 		a.text(method[0][0]+'::'+method[0][1]);
 		a.attr('target', '_blank');
 		$('#disp').html(a.prop('outerHTML'));
-		$('#disp').html('⟶ '+a.prop('outerHTML'));
+		$('#disp').html('→ '+a.prop('outerHTML'));
+		document.querySelector(".clear.result").style.display = "block";
 	} else {
 		$('#disp').text('');
+		document.querySelector(".clear.result").style.display = "none";
 	}
 }
 
